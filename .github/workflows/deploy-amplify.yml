@@ -62,7 +62,8 @@ jobs:
           echo "uploadUrl=$(echo "$OUT" | jq -r '.zipUploadUrl')" >> "$GITHUB_OUTPUT"
 
       - name: Upload artifact to Amplify
-        run: curl -fsSL -H "Content-Type: application/zip" --upload-file dist.zip "${{ steps.dep.outputs.uploadUrl }}"
+        run: |
+          curl -fsSL -H "Content-Type: application/zip" --upload-file dist.zip "${{ steps.dep.outputs.uploadUrl }}"
 
       - name: Start Amplify deployment
         run: aws amplify start-deployment --app-id "${{ vars.AMPLIFY_APP_ID }}" --branch-name main --job-id "${{ steps.dep.outputs.jobId }}"

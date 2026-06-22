@@ -78,7 +78,9 @@ export default function AuctionLive({ verified = false, onRequireDni, onBack }) 
     (signal) =>
       Promise.all([
         getAuction(auctionId, { signal }),
-        listBids(auctionId, { size: 25, signal }),
+        // The bid history requires auth; for guests it 401s. Degrade gracefully
+        // to an empty list — the live price/count still come from the auction.
+        listBids(auctionId, { size: 25, signal }).catch(() => ({ content: [] })),
       ]).then(([auction, bids]) => ({ auction, bids })),
     [auctionId],
     { enabled: !!auctionId },

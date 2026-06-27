@@ -88,7 +88,7 @@ export default function Review({ onBack }) {
         </div>
 
         <Textarea label="Tu comentario (opcional)" maxLength={1000} rows={4}
-          placeholder="Contá cómo fue la compra: el estado del ítem, el envío, la comunicación…"
+          placeholder="Cuenta cómo fue la compra: el estado del ítem, el envío, la comunicación…"
           value={comment} onChange={(e) => setComment(e.target.value)} />
 
         <div className="rv__note"><Icon.Shield size={14} style={{ flex: 'none', marginTop: 1 }} /> Las reseñas no se pueden editar ni borrar una vez publicadas. Solo se permiten con la orden confirmada.</div>

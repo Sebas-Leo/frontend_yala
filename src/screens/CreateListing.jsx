@@ -120,7 +120,7 @@ export default function CreateListing({ onBack }) {
           <Input label="Título" placeholder="Charizard Base Set Holo — 1ª edición" hint="Mínimo 10 caracteres."
             value={form.values.title} onChange={form.handleChange('title')} error={form.errors.title} required />
         </div>
-        <Textarea label="Descripción" rows={4} maxLength={2000} placeholder="Contá el estado, procedencia, detalles relevantes…"
+        <Textarea label="Descripción" rows={4} maxLength={2000} placeholder="Cuenta el estado, procedencia, detalles relevantes…"
           value={form.values.description} onChange={form.handleChange('description')} />
 
         <div>

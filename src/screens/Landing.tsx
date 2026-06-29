@@ -202,7 +202,7 @@ export default function LandingScreen({ onOpenAuction }: LandingScreenProps) {
   const scrollToLive = () => {
     const el = document.getElementById('subastas');
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    else navigate('/');
+    else navigate('/inicio');
   };
 
   return (
@@ -239,7 +239,7 @@ export default function LandingScreen({ onOpenAuction }: LandingScreenProps) {
         <div className="yl__wrap">
           <div className="yl__livehd">
             <div className="yl__livett"><span className="yl__livedot" /> Subastas activas en vivo</div>
-            <Button variant="ghost" size="sm" iconRight={<Icon.ChevronRight size={16} />} onClick={() => navigate('/')}>
+            <Button variant="ghost" size="sm" iconRight={<Icon.ChevronRight size={16} />} onClick={() => navigate('/inicio')}>
               Ver todas
             </Button>
           </div>
@@ -293,7 +293,7 @@ export default function LandingScreen({ onOpenAuction }: LandingScreenProps) {
                 icon={cat.icon}
                 name={cat.name}
                 desc={cat.desc}
-                onClick={() => navigate('/?category=' + encodeURIComponent(cat.filter))}
+                onClick={() => navigate('/inicio?category=' + encodeURIComponent(cat.filter))}
               />
             ))}
           </div>

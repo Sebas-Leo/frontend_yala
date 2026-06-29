@@ -29,7 +29,7 @@ export default function App() {
     navigate('/');
   };
 
-  const navDest = { home: '/', seller: '/seller', notifications: '/notifications', profile: '/seller/me', login: '/login' };
+  const navDest = { home: '/inicio', seller: '/seller', notifications: '/notifications', profile: '/seller/me', login: '/login' };
 
   // Wait for the stored session to hydrate before painting the shell, so the
   // navbar shows the real user (or the guest state) instead of flickering.
@@ -49,7 +49,7 @@ export default function App() {
       <AppShell
         user={shellUser}
         onNav={(d) => navigate(navDest[d] || '/')}
-        onCat={() => navigate('/')}
+        onCat={() => navigate('/inicio')}
         onLogout={handleLogout}
       />
       <div style={{ minHeight: 'calc(100vh - 112px)', paddingBottom: 80 }}>

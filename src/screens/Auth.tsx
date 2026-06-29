@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Tabs, Input, Button, Icon } from '../ds';
+import { Input, Button, Icon } from '../ds';
 import { useAuth } from '../auth/AuthContext';
 
 const css = `
@@ -15,6 +15,7 @@ const css = `
 .au__foot{font-size:13px;color:var(--text-muted);text-align:center;margin-top:18px;}
 .au__link{color:var(--text-link);font-weight:600;cursor:pointer;}
 .au__err{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--danger,#d92d20);background:var(--danger-subtle,#fef3f2);border:1px solid var(--danger,#d92d20);border-radius:var(--radius-md);padding:10px 12px;}
+.au__title{font-size:19px;font-weight:800;color:var(--text-strong);letter-spacing:-.01em;margin-bottom:2px;}
 @media(max-width:420px){.au{padding:24px 16px;}.au__row{flex-direction:column;gap:14px;}}
 `;
 let ic = false; function ensure(){ if(!ic){ic=true;const s=document.createElement('style');s.textContent=css;document.head.appendChild(s);} }
@@ -72,13 +73,9 @@ export default function Auth({ onAuth }: AuthProps) {
         <div className="au__sub">Subastas de coleccionables geek.</div>
       </div>
       <div className="au__card">
-        <Tabs value={tab} onChange={switchTab} tabs={[
-          { value: 'login', label: 'Ingresar' },
-          { value: 'register', label: 'Crear cuenta' },
-        ]} />
-
         {tab === 'login' && (
           <form className="au__form" onSubmit={doLogin}>
+            <div className="au__title">Ingresar</div>
             {errorBanner}
             <Input label="Email" type="email" placeholder="tu@email.com" required
               value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -93,6 +90,7 @@ export default function Auth({ onAuth }: AuthProps) {
 
         {tab === 'register' && (
           <form className="au__form" onSubmit={doRegister}>
+            <div className="au__title">Crear cuenta</div>
             {errorBanner}
             <Input label="DNI" mono inputMode="numeric" maxLength={8} placeholder="12345678" required
               value={dni} onChange={(e) => setDni(e.target.value.replace(/\D/g, '').slice(0, 8))}
@@ -113,6 +111,7 @@ export default function Auth({ onAuth }: AuthProps) {
             <Button variant="primary" size="lg" fullWidth type="submit" disabled={busy || !dniValid}>
               {busy ? 'Creando…' : 'Crear cuenta'}
             </Button>
+            <div className="au__foot">¿Ya tienes cuenta? <span className="au__link" onClick={() => switchTab('login')}>Ingresar</span></div>
           </form>
         )}
       </div>

@@ -16,7 +16,7 @@ export default function ProtectedRoute({ children, roles }: { children: React.Re
     return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   }
   if (roles && roles.length > 0 && !roles.includes(role)) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/inicio" replace />;
   }
   return children;
 }

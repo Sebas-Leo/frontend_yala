@@ -49,15 +49,16 @@ export interface RouteDef {
 export function buildRoutes(ctx: any): RouteDef[] {
   const { navigate, toast, auth } = ctx;
 
-  const handleAuth = (profile: any) => navigate(profile && profile.role === 'SELLER' ? '/seller' : '/');
+  const handleAuth = (profile: any) => navigate(profile && profile.role === 'SELLER' ? '/seller' : '/inicio');
   const verifyIdentity = () => {
     auth.setIdentityVerified(true);
     toast.success('Identidad verificada', 'Ya puedes pujar y comprar en Yala.', 'Shield');
   };
 
   return [
+    { path: '/', element: <Landing onOpenAuction={(id) => navigate('/auction/' + id)} /> },
     {
-      path: '/',
+      path: '/inicio',
       element: (
         <Home
           onOpenAuction={(id) => navigate('/auction/' + id)}
@@ -65,14 +66,13 @@ export function buildRoutes(ctx: any): RouteDef[] {
         />
       ),
     },
-    { path: '/inicio', element: <Landing onOpenAuction={(id) => navigate('/auction/' + id)} /> },
     {
       path: '/live/:id',
       element: (
         <LiveView
           verified={auth.isIdentityVerified}
           onRequireDni={() => navigate('/verify-dni')}
-          onBack={() => navigate('/')}
+          onBack={() => navigate('/inicio')}
         />
       ),
     },
@@ -82,7 +82,7 @@ export function buildRoutes(ctx: any): RouteDef[] {
         <AuctionLive
           verified={auth.isIdentityVerified}
           onRequireDni={() => navigate('/verify-dni')}
-          onBack={() => navigate('/')}
+          onBack={() => navigate('/inicio')}
         />
       ),
     },
@@ -92,7 +92,7 @@ export function buildRoutes(ctx: any): RouteDef[] {
         <ListingDetail
           verified={auth.isIdentityVerified}
           onRequireDni={() => navigate('/verify-dni')}
-          onBack={() => navigate('/')}
+          onBack={() => navigate('/inicio')}
         />
       ),
     },
@@ -106,7 +106,7 @@ export function buildRoutes(ctx: any): RouteDef[] {
     {
       path: '/orders',
       protect: true,
-      element: <MyOrders onOpenOrder={(id) => (id === 'home' ? navigate('/') : navigate('/checkout?orderId=' + id))} />,
+      element: <MyOrders onOpenOrder={(id) => (id === 'home' ? navigate('/inicio') : navigate('/checkout?orderId=' + id))} />,
     },
     { path: '/notifications', protect: true, element: <Notifications /> },
     {
@@ -133,7 +133,7 @@ export function buildRoutes(ctx: any): RouteDef[] {
       protect: true,
       element: (
         <SellerApply
-          onBack={() => navigate('/')}
+          onBack={() => navigate('/inicio')}
           onAlreadySeller={() => navigate('/seller')}
         />
       ),

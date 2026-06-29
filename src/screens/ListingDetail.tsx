@@ -105,7 +105,7 @@ export default function ListingDetail({ verified = false, onRequireDni, onBack }
       <div className="ld__empty">
         <EmptyState icon={<Icon.AlertTriangle size={26} />} title="No encontramos esta publicación"
           description={error?.message || 'La publicación no existe o fue retirada.'}
-          actions={<Button variant="secondary" onClick={() => navigate('/')}>Volver al inicio</Button>} />
+          actions={<Button variant="secondary" onClick={() => navigate('/inicio')}>Volver al inicio</Button>} />
       </div>
     );
   }

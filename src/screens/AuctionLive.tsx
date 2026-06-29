@@ -30,10 +30,11 @@ const css = `
 .yal__cat{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--brand);margin-bottom:8px;}
 .yal__title{font-size:28px;font-weight:800;color:var(--text-strong);line-height:1.18;letter-spacing:-.02em;margin-bottom:14px;text-wrap:balance;}
 .yal__livebox{background:linear-gradient(165deg,var(--live-50),var(--surface-card));border:1px solid var(--live-border);border-radius:var(--radius-xl);padding:20px;box-shadow:var(--shadow-live);margin-bottom:18px;}
-.yal__lr{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:6px;}
+.yal__lr{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:6px;flex-wrap:wrap;}
 .yal__lbl{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--live-hover);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
 .yal__livedot{width:8px;height:8px;border-radius:50%;background:var(--live);animation:yala-live-pulse 1.4s infinite;}
-.yal__cdwrap{text-align:right;}
+.yal__cdwrap{text-align:right;min-width:0;}
+.yal__cdwrap .yds-cd__b{min-width:42px;}
 .yal__bidsno{font-family:var(--font-mono);font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:5px;margin-top:10px;}
 .yal__bidform{display:flex;gap:10px;align-items:flex-end;margin-top:16px;padding-top:16px;border-top:1px solid var(--live-border);}
 .yal__hint{font-size:12px;color:var(--text-muted);margin-top:9px;line-height:1.5;display:flex;gap:6px;align-items:flex-start;}

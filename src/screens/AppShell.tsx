@@ -30,6 +30,9 @@ const shellCSS = `
 .ysh__register{display:inline-flex;align-items:center;gap:7px;height:40px;padding:0 18px;border-radius:var(--radius-md);background:#0E28D6;color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;transition:background var(--dur-fast),transform var(--dur-fast);box-shadow:0 2px 10px rgba(14,40,214,.28);}
 .ysh__register:hover{background:#0a1fb0;transform:translateY(-1px);}
 .ysh__nav{height:48px;background:var(--surface-card);border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;gap:4px;padding:0 24px;overflow-x:auto;}
+.ysh__nav--inline{flex:none;max-width:46%;height:auto;border-bottom:none;background:transparent;padding:0;scrollbar-width:none;}
+.ysh__nav--inline::-webkit-scrollbar{display:none;}
+.ysh__nav--row{display:none;}
 .ysh__cat{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 14px;border-radius:var(--radius-pill);font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;white-space:nowrap;transition:all var(--dur-fast);border:1px solid transparent;}
 .ysh__cat:hover{background:var(--surface-sunken);color:var(--text-strong);}
 .ysh__cat--active{background:var(--brand-subtle);color:var(--brand);}
@@ -43,6 +46,8 @@ const shellCSS = `
   .ysh__sell,.ysh__login,.ysh__register{width:100%;justify-content:center;}
   .ysh__user{justify-content:flex-start;}
   .ysh__nav{padding:0 12px;}
+  .ysh__nav--inline{display:none;}
+  .ysh__nav--row{display:flex;}
 }
 @media(max-width:400px){
   .ysh__bar{padding:0 10px;}
@@ -117,12 +122,26 @@ export default function AppShell({ onNav, onLogout, user = null }: AppShellProps
 
   const goCategory = (name) => navigate(name ? `/inicio?category=${encodeURIComponent(name)}` : '/inicio');
 
+  const cats = (
+    <>
+      <span className={`ysh__cat${!activeCat ? ' ysh__cat--active' : ''}`} onClick={() => goCategory(null)}>
+        <Icon.LayoutGrid size={15} /> Todo
+      </span>
+      {categories.map((c) => (
+        <span key={c.id} className={`ysh__cat${activeCat === c.name ? ' ysh__cat--active' : ''}`} onClick={() => goCategory(c.name)}>
+          {c.name}
+        </span>
+      ))}
+    </>
+  );
+
   return (
     <div className="ysh">
       <div className="ysh__bar">
-        <div className="ysh__logo" onClick={() => onNav && onNav('home')}>
+        <div className="ysh__logo" onClick={() => navigate('/')}>
           <img src="/assets/yala-logo.png" alt="Yala" />
         </div>
+        <div className="ysh__nav ysh__nav--inline">{cats}</div>
         <label className="ysh__search">
           <Icon.Search size={18} />
           <input
@@ -164,16 +183,7 @@ export default function AppShell({ onNav, onLogout, user = null }: AppShellProps
           )}
         </div>
       </div>
-      <div className="ysh__nav">
-        <span className={`ysh__cat${!activeCat ? ' ysh__cat--active' : ''}`} onClick={() => goCategory(null)}>
-          <Icon.LayoutGrid size={15} /> Todo
-        </span>
-        {categories.map((c) => (
-          <span key={c.id} className={`ysh__cat${activeCat === c.name ? ' ysh__cat--active' : ''}`} onClick={() => goCategory(c.name)}>
-            {c.name}
-          </span>
-        ))}
-      </div>
+      <div className="ysh__nav ysh__nav--row">{cats}</div>
     </div>
   );
 }

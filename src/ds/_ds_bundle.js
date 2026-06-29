@@ -1850,8 +1850,9 @@ const CSS = `
 .yds-ac:hover .yds-ac__img{transform:scale(1.04);}
 .yds-ac__badge{position:absolute;top:10px;left:10px;}
 .yds-ac__cd{position:absolute;left:10px;right:10px;bottom:10px;display:flex;justify-content:center;background:rgba(15,15,22,.62);backdrop-filter:blur(6px);border-radius:var(--radius-md);padding:6px;}
-.yds-ac__cd .yds-cd__b{background:rgba(255,255,255,.14)!important;}
-.yds-ac__cd .yds-cd__num{color:#fff;}
+.yds-ac__cd .yds-cd__blocks{gap:4px;}
+.yds-ac__cd .yds-cd__b{background:rgba(255,255,255,.14)!important;min-width:36px;padding:5px 5px;gap:2px;}
+.yds-ac__cd .yds-cd__num{color:#fff;font-size:17px;}
 .yds-ac__cd .yds-cd__unit{color:rgba(255,255,255,.7)!important;}
 .yds-ac__cd .yds-cd__sep{color:#fff;}
 .yds-ac__body{padding:13px 14px 15px;display:flex;flex-direction:column;gap:9px;flex:1;}

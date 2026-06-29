@@ -58,7 +58,7 @@ export default function MyOrders({ onOpenOrder }: MyOrdersProps) {
     return <div className="yo"><div className="yo__h1">Mis órdenes</div>
       <EmptyState icon={<Icon.Inbox size={26} />} title="Todavía no tienes órdenes"
         description="Cuando compres o ganes una subasta, vas a verlas aquí."
-        actions={<Button onClick={() => navigate('/')}>Explorar el marketplace</Button>} /></div>;
+        actions={<Button onClick={() => navigate('/inicio')}>Explorar el marketplace</Button>} /></div>;
   }
 
   return (

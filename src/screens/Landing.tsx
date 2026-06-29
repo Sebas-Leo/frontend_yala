@@ -1,9 +1,10 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button, AuctionCard, EmptyState, CardSkeleton, Icon } from '../ds';
 import { listListings } from '../api/listings';
 import { auctionCardFrom } from '../api/adapters';
 import { useFetch } from '../hooks/useFetch';
+import { useAuth } from '../auth/AuthContext';
 
 // Marketing landing page at /inicio. The browse/explore grid lives at /.
 const css = `
@@ -197,8 +198,20 @@ export default function LandingScreen({ onOpenAuction }: LandingScreenProps) {
 
   const items = auctionsQ.data?.content || [];
 
+  const { isAuthenticated, role } = useAuth();
+  const location = useLocation();
+  // Footer "¿Cómo funciona?" links to /#como-funciona; scroll to it when the hash is present.
+  React.useEffect(() => {
+    if (!location.hash) return;
+    const el = document.getElementById(location.hash.slice(1));
+    if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+  }, [location.hash]);
+
   const openAuction = (id) => (onOpenAuction ? onOpenAuction(id) : navigate('/auction/' + id));
-  const goRegister = () => navigate('/register');
+  // Logged in → "Vender" (seller dashboard or apply); otherwise → register.
+  const goSell = () =>
+    isAuthenticated ? navigate(role === 'SELLER' ? '/seller' : '/seller/apply') : navigate('/register');
+  const ctaLabel = isAuthenticated ? 'Vender' : '{ctaLabel}';
   const scrollToLive = () => {
     const el = document.getElementById('subastas');
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -219,8 +232,8 @@ export default function LandingScreen({ onOpenAuction }: LandingScreenProps) {
             subastas transparentes. Tu dinero se queda en Yala hasta que el producto llegue a tus manos.
           </p>
           <div className="yl__cta">
-            <Button variant="primary" size="lg" iconLeft={<Icon.User size={18} />} onClick={goRegister}>
-              Crear cuenta gratis
+            <Button variant="primary" size="lg" iconLeft={<Icon.User size={18} />} onClick={goSell}>
+              {ctaLabel}
             </Button>
             <Button variant="secondary" size="lg" iconRight={<Icon.ChevronRight size={18} />} onClick={scrollToLive}>
               Ver subastas activas
@@ -259,7 +272,7 @@ export default function LandingScreen({ onOpenAuction }: LandingScreenProps) {
               icon={<Icon.Gavel size={26} />}
               title="Pronto habrá nuevas subastas"
               description="Regístrate para ser el primero en enterarte cuando se abran nuevas subastas."
-              actions={<Button variant="primary" iconLeft={<Icon.User size={17} />} onClick={goRegister}>Crear cuenta gratis</Button>}
+              actions={<Button variant="primary" iconLeft={<Icon.User size={17} />} onClick={goSell}>{ctaLabel}</Button>}
             />
           ) : (
             <div className="yl__grid">
@@ -301,7 +314,7 @@ export default function LandingScreen({ onOpenAuction }: LandingScreenProps) {
       </section>
 
       {/* 4. How the auction works */}
-      <section className="yl__sec yl__sec--tint">
+      <section id="como-funciona" className="yl__sec yl__sec--tint">
         <div className="yl__wrap">
           <div className="yl__sechd">
             <h2 className="yl__sectt">Pujar es tan fácil como hacer una oferta</h2>
@@ -375,7 +388,7 @@ export default function LandingScreen({ onOpenAuction }: LandingScreenProps) {
             })}
           </div>
           <div className="yl__cta">
-            <Button variant="primary" size="lg" iconLeft={<Icon.Plus size={18} />} onClick={goRegister}>
+            <Button variant="primary" size="lg" iconLeft={<Icon.Plus size={18} />} onClick={goSell}>
               Quiero vender en Yala
             </Button>
           </div>
@@ -388,8 +401,8 @@ export default function LandingScreen({ onOpenAuction }: LandingScreenProps) {
           <div className="yl__final">
             <h2 className="yl__finalt">¿Listo para encontrar ese coleccionable que tanto buscabas?</h2>
             <p className="yl__finalp">Crea tu cuenta gratis y empieza a pujar hoy. Tu dinero siempre protegido en custodia.</p>
-            <Button variant="secondary" size="lg" iconLeft={<Icon.User size={18} />} onClick={goRegister}>
-              Crear cuenta gratis
+            <Button variant="secondary" size="lg" iconLeft={<Icon.User size={18} />} onClick={goSell}>
+              {ctaLabel}
             </Button>
           </div>
         </div>

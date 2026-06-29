@@ -83,8 +83,8 @@ export default function Footer() {
 
         <nav className="yf__col">
           <div className="yf__ct">Navegar</div>
-          <button className="yf__link" onClick={() => navigate('/inicio')}>Inicio</button>
-          <button className="yf__link" onClick={() => navigate('/')}>Explorar subastas</button>
+          <button className="yf__link" onClick={() => navigate('/')}>Inicio</button>
+          <button className="yf__link" onClick={() => navigate('/inicio')}>Explorar subastas</button>
           <button className="yf__link" onClick={() => navigate('/login')}>Vender</button>
         </nav>
 

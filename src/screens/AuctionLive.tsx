@@ -233,7 +233,7 @@ export default function AuctionLive({ verified = false, onRequireDni, onBack }: 
       <div className="yal__empty">
         <EmptyState icon={<Icon.AlertTriangle size={26} />} title="No encontramos esta subasta"
           description={listingQ.error?.message || 'La publicación no existe o fue retirada.'}
-          actions={<Button variant="secondary" onClick={() => navigate('/')}>Volver al inicio</Button>} />
+          actions={<Button variant="secondary" onClick={() => navigate('/inicio')}>Volver al inicio</Button>} />
       </div>
     );
   }

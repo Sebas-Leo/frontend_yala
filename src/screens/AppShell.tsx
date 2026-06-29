@@ -111,11 +111,11 @@ export default function AppShell({ onNav, onLogout, user = null }: AppShellProps
   React.useEffect(() => {
     if (debounced === lastPushed.current) return;
     lastPushed.current = debounced;
-    navigate(debounced ? `/?q=${encodeURIComponent(debounced)}` : '/');
+    navigate(debounced ? `/inicio?q=${encodeURIComponent(debounced)}` : '/inicio');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debounced]);
 
-  const goCategory = (name) => navigate(name ? `/?category=${encodeURIComponent(name)}` : '/');
+  const goCategory = (name) => navigate(name ? `/inicio?category=${encodeURIComponent(name)}` : '/inicio');
 
   return (
     <div className="ysh">
@@ -129,7 +129,7 @@ export default function AppShell({ onNav, onLogout, user = null }: AppShellProps
             placeholder="Buscar Charizard, Funko, comics…"
             value={term}
             onChange={(e) => setTerm(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter') navigate(term ? `/?q=${encodeURIComponent(term)}` : '/'); }}
+            onKeyDown={(e) => { if (e.key === 'Enter') navigate(term ? `/inicio?q=${encodeURIComponent(term)}` : '/inicio'); }}
           />
         </label>
         <button className="ysh__burger" aria-label="Menú" onClick={() => setMenuOpen((o) => !o)}>
@@ -147,7 +147,6 @@ export default function AppShell({ onNav, onLogout, user = null }: AppShellProps
               <div className="ysh__user" onClick={() => onNav && onNav('profile')}>
                 <Avatar name={user.name} verified={user.verified} size="sm" />
                 <span className="ysh__uname">{user.name.split(' ')[0]}</span>
-                <Icon.ChevronDown size={15} />
               </div>
               <IconButton label="Cerrar sesión" variant="ghost" onClick={() => onLogout && onLogout()}>
                 {Icon.Logout ? <Icon.Logout size={20} /> : <Icon.ChevronRight size={20} />}

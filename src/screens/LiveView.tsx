@@ -82,9 +82,16 @@ export default function LiveView({ verified, onRequireDni, onBack }: Props) {
   const [chatText, setChatText] = React.useState('');
   const [bid, setBid] = React.useState('');
   const [submitting, setSubmitting] = React.useState(false);
+  const [ended, setEnded] = React.useState(false);
+  // Tracks whether the LiveKit room ever connected, so a disconnect after the
+  // host ends the stream is treated as "ended" instead of a generic error.
+  const connectedRef = React.useRef(false);
 
-  // Seed auction state from the detail fetch.
-  React.useEffect(() => { setAuction(detail?.activeAuction ?? null); }, [detail]);
+  // Seed auction + ended state from the detail fetch.
+  React.useEffect(() => {
+    setAuction(detail?.activeAuction ?? null);
+    if (detail?.status === 'ENDED') setEnded(true);
+  }, [detail]);
 
   // Seed chat history (endpoint returns newest-first; show oldest-first).
   React.useEffect(() => {
@@ -99,7 +106,7 @@ export default function LiveView({ verified, onRequireDni, onBack }: Props) {
     if (!id) return;
     return subscribeLive<LiveUpdateMessage>(id, (msg) => {
       if (!msg) return;
-      if (msg.type === 'LIVE_ENDED') { setAuction(null); return; }
+      if (msg.type === 'LIVE_ENDED') { setEnded(true); setAuction(null); return; }
       if (msg.auction) setAuction(msg.auction);
     });
   }, [id]);
@@ -166,8 +173,14 @@ export default function LiveView({ verified, onRequireDni, onBack }: Props) {
       </div>
       <div className="ylv">
         <div>
-          {LIVEKIT_URL && tk?.token ? (
-            <LiveKitRoom serverUrl={tk.url || LIVEKIT_URL} token={tk.token} connect audio={false} video={false}>
+          {ended ? (
+            <div className="ylv__stage">
+              <div className="ylv__offline">La transmisión finalizó.<br />¡Gracias por acompañarnos!</div>
+            </div>
+          ) : LIVEKIT_URL && tk?.token ? (
+            <LiveKitRoom serverUrl={tk.url || LIVEKIT_URL} token={tk.token} connect audio={false} video={false}
+              onConnected={() => { connectedRef.current = true; }}
+              onDisconnected={() => { if (connectedRef.current) setEnded(true); }}>
               <Stage />
             </LiveKitRoom>
           ) : (
@@ -216,7 +229,9 @@ export default function LiveView({ verified, onRequireDni, onBack }: Props) {
               </>
             ) : (
               <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
-                No hay una subasta activa en este momento. ¡Quédate atento!
+                {ended
+                  ? 'La transmisión finalizó. No hay más subastas en este live.'
+                  : 'No hay una subasta activa en este momento. ¡Quédate atento!'}
               </div>
             )}
           </div>
@@ -231,10 +246,10 @@ export default function LiveView({ verified, onRequireDni, onBack }: Props) {
               ))}
             </div>
             <form className="ylv__chatform" onSubmit={sendComment}>
-              <Input placeholder={isAuthenticated ? 'Escribe un mensaje…' : 'Inicia sesión para comentar'}
+              <Input placeholder={ended ? 'El chat se cerró' : isAuthenticated ? 'Escribe un mensaje…' : 'Inicia sesión para comentar'}
                 value={chatText} onChange={(e: any) => setChatText(e.target.value)} style={{ flex: 1 }}
-                disabled={!isAuthenticated} />
-              <Button type="submit" variant="secondary" disabled={!isAuthenticated || !chatText.trim()}>Enviar</Button>
+                disabled={!isAuthenticated || ended} />
+              <Button type="submit" variant="secondary" disabled={!isAuthenticated || ended || !chatText.trim()}>Enviar</Button>
             </form>
           </div>
         </div>

@@ -26,7 +26,8 @@ const css = `
 .ylv__auction{background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:16px;display:flex;flex-direction:column;gap:10px;}
 .ylv__atitle{font-size:15px;font-weight:800;color:var(--text-strong);}
 .ylv__arow{display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--text-muted);}
-.ylv__bidrow{display:flex;gap:8px;}
+.ylv__bidrow{display:flex;gap:8px;align-items:center;}
+.ylv__bidrow>button{flex:none;white-space:nowrap;}
 .ylv__chat{background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);display:flex;flex-direction:column;height:420px;}
 .ylv__chathd{padding:12px 14px;border-bottom:1px solid var(--border-subtle);font-weight:700;font-size:14px;color:var(--text-strong);}
 .ylv__msgs{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px;}
@@ -82,9 +83,16 @@ export default function LiveView({ verified, onRequireDni, onBack }: Props) {
   const [chatText, setChatText] = React.useState('');
   const [bid, setBid] = React.useState('');
   const [submitting, setSubmitting] = React.useState(false);
+  const [ended, setEnded] = React.useState(false);
+  // Tracks whether the LiveKit room ever connected, so a disconnect after the
+  // host ends the stream is treated as "ended" instead of a generic error.
+  const connectedRef = React.useRef(false);
 
-  // Seed auction state from the detail fetch.
-  React.useEffect(() => { setAuction(detail?.activeAuction ?? null); }, [detail]);
+  // Seed auction + ended state from the detail fetch.
+  React.useEffect(() => {
+    setAuction(detail?.activeAuction ?? null);
+    if (detail?.status === 'ENDED') setEnded(true);
+  }, [detail]);
 
   // Seed chat history (endpoint returns newest-first; show oldest-first).
   React.useEffect(() => {
@@ -99,7 +107,7 @@ export default function LiveView({ verified, onRequireDni, onBack }: Props) {
     if (!id) return;
     return subscribeLive<LiveUpdateMessage>(id, (msg) => {
       if (!msg) return;
-      if (msg.type === 'LIVE_ENDED') { setAuction(null); return; }
+      if (msg.type === 'LIVE_ENDED') { setEnded(true); setAuction(null); return; }
       if (msg.auction) setAuction(msg.auction);
     });
   }, [id]);
@@ -166,8 +174,14 @@ export default function LiveView({ verified, onRequireDni, onBack }: Props) {
       </div>
       <div className="ylv">
         <div>
-          {LIVEKIT_URL && tk?.token ? (
-            <LiveKitRoom serverUrl={tk.url || LIVEKIT_URL} token={tk.token} connect audio={false} video={false}>
+          {ended ? (
+            <div className="ylv__stage">
+              <div className="ylv__offline">La transmisión finalizó.<br />¡Gracias por acompañarnos!</div>
+            </div>
+          ) : LIVEKIT_URL && tk?.token ? (
+            <LiveKitRoom serverUrl={tk.url || LIVEKIT_URL} token={tk.token} connect audio={false} video={false}
+              onConnected={() => { connectedRef.current = true; }}
+              onDisconnected={() => { if (connectedRef.current) setEnded(true); }}>
               <Stage />
             </LiveKitRoom>
           ) : (
@@ -201,7 +215,8 @@ export default function LiveView({ verified, onRequireDni, onBack }: Props) {
                 {auction.status === 'ACTIVE' && (
                   <div className="ylv__bidrow">
                     <Input prefix="S/." mono placeholder={String(minNext)} value={bid}
-                      onChange={(e: any) => setBid(e.target.value.replace(/[^\d.]/g, ''))} style={{ flex: 1 }} />
+                      onChange={(e: any) => { let v = e.target.value.replace(/[^\d.]/g, ''); if (Number(v) > 9999) v = '9999'; setBid(v); }}
+                      style={{ flex: 1, minWidth: 0 }} />
                     <Button onClick={submitBid} disabled={submitting}
                       iconLeft={Icon.Gavel ? <Icon.Gavel size={16} /> : null}>Pujar</Button>
                   </div>
@@ -216,7 +231,9 @@ export default function LiveView({ verified, onRequireDni, onBack }: Props) {
               </>
             ) : (
               <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
-                No hay una subasta activa en este momento. ¡Quédate atento!
+                {ended
+                  ? 'La transmisión finalizó. No hay más subastas en este live.'
+                  : 'No hay una subasta activa en este momento. ¡Quédate atento!'}
               </div>
             )}
           </div>
@@ -231,10 +248,10 @@ export default function LiveView({ verified, onRequireDni, onBack }: Props) {
               ))}
             </div>
             <form className="ylv__chatform" onSubmit={sendComment}>
-              <Input placeholder={isAuthenticated ? 'Escribe un mensaje…' : 'Inicia sesión para comentar'}
+              <Input placeholder={ended ? 'El chat se cerró' : isAuthenticated ? 'Escribe un mensaje…' : 'Inicia sesión para comentar'}
                 value={chatText} onChange={(e: any) => setChatText(e.target.value)} style={{ flex: 1 }}
-                disabled={!isAuthenticated} />
-              <Button type="submit" variant="secondary" disabled={!isAuthenticated || !chatText.trim()}>Enviar</Button>
+                disabled={!isAuthenticated || ended} />
+              <Button type="submit" variant="secondary" disabled={!isAuthenticated || ended || !chatText.trim()}>Enviar</Button>
             </form>
           </div>
         </div>
